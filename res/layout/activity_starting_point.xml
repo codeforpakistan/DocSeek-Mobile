@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity" >
+
+        <!-- The main content view -->
+
+		<!-- FrameLayout: android:clickable="true"
+		 http://stackoverflow.com/questions/18044277/android-navigation-drawer-bug-using-the-sample -->
+		 
+        <FrameLayout
+            android:id="@+id/placeHolderFrag"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true" >
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="#E5E5E5"
+            android:orientation="vertical" >
+
+
+                    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#E5E5E5"
+            android:orientation="horizontal" 
+            android:id="@+id/searchSection">
+            
+            <AutoCompleteTextView 
+                android:id="@+id/mSearchBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Search" 
+                />
+    
+    
+                    
+           
+</LinearLayout>
+            <!-- The navigation drawer -->
+
+            <ListView
+                android:id="@+id/slideMenuList"
+                android:padding="5dp"
+                android:layout_width="240dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:choiceMode="singleChoice"
+                android:dividerHeight="7dp"
+                android:listSelector="@drawable/list_selecter"
+                android:divider = "#E5E5E5"
+                android:paddingTop="5dp" />
+        </LinearLayout>
+        
+       
+        
+    </android.support.v4.widget.DrawerLayout>
+
+
+</RelativeLayout>
