@@ -67,13 +67,66 @@ public class StartingPoint extends SherlockFragmentActivity {
 		getSupportActionBar().setTitle("Doc Seek");
 		getSupportActionBar().setSubtitle("Find Your Doctor");
 		
+		// for splash screen
+		getSupportActionBar().hide();
+		
 		getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5DC4EB")));
+		
+		slideMenu = (DrawerLayout) findViewById(R.id.drawer_layout);
 		
 		final FragmentManager fragManager = getSupportFragmentManager();
 		FragmentTransaction fragTranscation= fragManager.beginTransaction();
 		
-		fragTranscation.replace(R.id.placeHolderFrag, new AboutDevelopers());
-		fragTranscation.commit();
+		fragTranscation.replace(R.id.placeHolderFrag, new SplashScreen_Frag()).commit();
+		
+		// disabling slideMenu for the splash screen
+		slideMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+		
+		
+		if(new CheckAvailabilityOfInternet().checkAvailabilityOfInternet(this))
+		{
+			Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
+		
+			
+			getSupportActionBar().show();
+			
+			// enabling slideMenu opening closing 
+			slideMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+			
+			fragManager.beginTransaction().replace(R.id.placeHolderFrag, new AboutDevelopers()).commit();
+		}
+		else
+		{
+			//Toast.makeText(this, "Phone is not connected to internet\nYou can't use our services", Toast.LENGTH_LONG).show();
+			
+			
+			AlertDialog.Builder adBuilder = new AlertDialog.Builder(this).setTitle("Connectivity Issue")
+					.setMessage("Internet is not available\nPlease connect to the internet and try again!")
+					.setCancelable(false).setPositiveButton("OK", new OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+					
+					finish();
+				}
+			});
+			
+			try {
+				
+				// delaying alert dialog popup for a few seconds for professional look :D
+				Thread.sleep(3000);
+				
+				adBuilder.create().show();
+				
+			} 
+			catch (InterruptedException e) 
+			{
+				
+				e.printStackTrace();
+			}
+			
+		}
 		
 		handler = new Handler();
 
@@ -103,8 +156,6 @@ public class StartingPoint extends SherlockFragmentActivity {
 		});
 		
 
-		
-		slideMenu = (DrawerLayout) findViewById(R.id.drawer_layout);
 		
 		// changing drag sensitivity area width using reflections
 		try
