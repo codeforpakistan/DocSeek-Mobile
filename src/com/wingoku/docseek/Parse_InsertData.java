@@ -3,6 +3,7 @@ package com.wingoku.docseek;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
@@ -24,9 +25,10 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 	
 	public int listView_ID;
 	
-	public String docList[];
+	public String docList[], hospList[];
 	
 	public ListView myList;
+	
 	
 	public Parse_InsertData(Context con, int listView_ID, ListView listView)
 	{
@@ -45,7 +47,9 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 			readSubjectsFromInternet();
 		}
 		catch(Exception e)
-		{			
+		{
+			//Toast.makeText(ListOfSuListOfDeptsAndSemesters.thise to connected to internet", Toast.LENGTH_SHORT).show();
+			
 			e.printStackTrace();
 		}
 		return null;
@@ -53,20 +57,30 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 	
 	public void readSubjectsFromInternet() throws ClientProtocolException, IOException, URISyntaxException, JSONException
 	{
+		Log.e("doc Seek", "Inside");
 		if(new CheckAvailabilityOfInternet().checkAvailabilityOfInternet(context))
 		{
-
-			DownloadData internet = new DownloadData(new URI("http://wingoku.bugs3.com/readData.php"), context); 
+			//System.out.println(phpScriptAddress);
+			
+			// encoding for special characters, without encoding android HTTP won't be able to send proper data to php script
+			String encodedParams = URLEncoder.encode(Search_Frag.selectedProfession, "UTF-8");
+			
+			DownloadData internet = new DownloadData(new URI("http://wingoku.bugs3.com/docAndHospList.php?userSelection="+ encodedParams), context); //"http://wingoku.bugs3.com/uetapp/getassignmentslist.php"
+			
 			String sb = internet.divideStrings();
 			
 			
 			JSONArray array = new JSONArray(sb);
-
+			
 			System.out.println("Data "+sb);
 			
 			docList = new String[array.length()];
 			
+			hospList = new String[array.length()];
+			
 			System.out.println("length is "+array.length());
+			
+			Log.e("DocSeek", "Lenght "+array.length());
 			
 			int length = array.length();
 			
@@ -74,7 +88,13 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 			{
 				JSONObject temp = array.getJSONObject(i);
 				
-				docList[i]= temp.getString("FullName"); // json tag
+				docList[i]= temp.getString("FullName"); 
+			
+				hospList[i]= temp.getString("PlaceOfCurrentPosting");
+				
+
+				Log.e("DocSeek", docList[i]);
+				
 				
 			}
 		}
@@ -82,6 +102,9 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 			noInternet=true;
 
 	}
+	
+	
+	
 
 	@Override
 	protected void onPostExecute(Integer result) 
@@ -93,18 +116,18 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 		
 		if(docList != null)
 		{	
-			CustomArrayAdapter myAdapter = new CustomArrayAdapter(context, listView_ID ,docList); 
+			CustomAdapter_ForDocList myAdapter = new CustomAdapter_ForDocList(context, listView_ID ,docList,hospList); 
 			
 			myList.setAdapter(myAdapter);
-		
+			
+			
 		}
 		else
 		{
 			Toast.makeText(context, "No Data Found!", Toast.LENGTH_LONG).show();
-			
+			//finish();
 		}
-		
-		
-	}
 
+	}
+	
 }

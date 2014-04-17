@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#E5E5E5"
+    android:padding="5dp" >
 
     <ListView
         android:id="@+id/doc_listView"
@@ -9,6 +11,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:divider="#E5E5E5"
+        android:dividerHeight="7dp"
 	 >
     </ListView>
 

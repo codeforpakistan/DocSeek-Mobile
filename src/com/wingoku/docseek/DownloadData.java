@@ -32,15 +32,19 @@ public class DownloadData {
 	
 	public DownloadData(URI address, Context context) throws ClientProtocolException, IOException
 	{
-		con = context;	
+		con = context;
+		//Toast.makeText(context, "inside reader start", Toast.LENGTH_SHORT).show();	
 		
 		HttpClient client = new DefaultHttpClient();
 		
-		HttpGet request = new HttpGet(); // request data using http get protocol
+		HttpGet request = new HttpGet(); 
 		
 		request.setURI(address);
 		
+		System.out.println("address is "+ address);
+		
 		HttpResponse response = client.execute(request);
+
 			
 		HttpEntity entity = response.getEntity();
 		
@@ -51,13 +55,12 @@ public class DownloadData {
 		bufReader = new BufferedReader(reader,8);
 		
 
-
 	}
 	
 	
 	public String divideStrings() throws IOException
 	{
-		StringBuilder sb = new StringBuilder(); // efficient & faster string processing compared to String
+		StringBuilder sb = new StringBuilder(); // efficient & faster then String
 		
 		String line = ""; 
 		

@@ -1,16 +1,10 @@
 package com.wingoku.docseek;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.URI;
-import java.net.URISyntaxException;
 
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -20,14 +14,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -38,11 +29,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 
 
+
+
 public class StartingPoint extends SherlockFragmentActivity {
 
+
+	// for itboard doc seek app
 	
-	
-	String[] names = {"Search", "All categories", "About", "Developers"};
+	String[] names = {"Search", "About", "Developers"};
 	
 	ListView list;
 	DrawerLayout slideMenu;
@@ -52,13 +46,11 @@ public class StartingPoint extends SherlockFragmentActivity {
 	
 	View lowerTab;
 	
-	AutoCompleteTextView searchBox;
-	
 	GoogleMap googleMap = null;
 	
 	Handler handler;
 
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,7 +77,7 @@ public class StartingPoint extends SherlockFragmentActivity {
 		
 		if(new CheckAvailabilityOfInternet().checkAvailabilityOfInternet(this))
 		{
-			Toast.makeText(this, "Connected", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Connection Successful!", Toast.LENGTH_LONG).show();
 		
 			
 			getSupportActionBar().show();
@@ -93,7 +85,7 @@ public class StartingPoint extends SherlockFragmentActivity {
 			// enabling slideMenu opening closing 
 			slideMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 			
-			fragManager.beginTransaction().replace(R.id.placeHolderFrag, new AboutDevelopers()).commit();
+			fragManager.beginTransaction().replace(R.id.placeHolderFrag, new Search_Frag()).commit();
 		}
 		else
 		{
@@ -112,56 +104,28 @@ public class StartingPoint extends SherlockFragmentActivity {
 				}
 			});
 			
-			try {
+		
+			// delaying alert dialog popup for a few seconds for professional look :D
+			final AlertDialog myDialog = adBuilder.create();
+
+			new Handler().postDelayed(new Runnable() {
 				
-				// delaying alert dialog popup for a few seconds for professional look :D
-				Thread.sleep(3000);
-				
-				adBuilder.create().show();
-				
-			} 
-			catch (InterruptedException e) 
-			{
-				
-				e.printStackTrace();
-			}
-			
+				@Override
+				public void run() {
+					
+					myDialog.show();
+				}
+			},3000);
 		}
 		
+		
 		handler = new Handler();
-
-		searchBox = (AutoCompleteTextView) findViewById(R.id.mSearchBox);
-		
-		searchBox.addTextChangedListener(new TextWatcher() {
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				
-				new Thread(new BackgroundTask()).start();
-				
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
 		
 
 		
-		// changing drag sensitivity area width using reflections
-		try
-		{
+		try {
 			Field mDragger = slideMenu.getClass().getDeclaredField(
-			        "mLeftDragger");
+			        "mLeftDragger");//mRightDragger for right obviously
 			mDragger.setAccessible(true);
 			ViewDragHelper draggerObj = (ViewDragHelper) mDragger
 			        .get(slideMenu);
@@ -176,9 +140,11 @@ public class StartingPoint extends SherlockFragmentActivity {
 		catch (Exception e) {
 			// TODO: handle exception
 		}
+		
 		list = (ListView) findViewById(R.id.slideMenuList);
 		
-		list.setAdapter(new CustomArrayAdapter(StartingPoint.this, R.layout.custom_list, names));
+		
+		list.setAdapter(new CustomAdapter_ForSideMenu(StartingPoint.this, R.layout.custom_list_side_menu, names));
 		
 		list.setOnItemClickListener(new OnItemClickListener() {
 
@@ -186,54 +152,24 @@ public class StartingPoint extends SherlockFragmentActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 					long arg3) {
 				
-
 			if(names[position].equals("Search"))
-					fragManager.beginTransaction().replace(R.id.placeHolderFrag, new DocList()).commit();
+					fragManager.beginTransaction().replace(R.id.placeHolderFrag, new Search_Frag()).commit();
 			else
 				if(names[position].equals("Developers"))
-					fragManager.beginTransaction().replace(R.id.placeHolderFrag, new AboutDevelopers()).commit();
+					fragManager.beginTransaction().addToBackStack("aboutDevs").replace(R.id.placeHolderFrag, new AboutDevelopers()).commit();
 				else
 					if(names[position].equals("About"))
 					{
-						fragManager.beginTransaction().replace(R.id.placeHolderFrag, new DocList_and_MapFrag()).commit();
+						fragManager.beginTransaction().addToBackStack("aboutApp").replace(R.id.placeHolderFrag, new About_DocSeek_Frag()).commit();
 						
-						GoogleMap googleMap = null;
-						
-						 if (googleMap == null) {
-							 
-							 if(getSupportFragmentManager().findFragmentById(R.id.mapFrag) == null)
-							 {
-								 Toast.makeText(getApplicationContext(),
-					                        "Null pointer", Toast.LENGTH_SHORT)
-					                        .show();
-								 if(((SupportMapFragment) getSupportFragmentManager().findFragmentById(
-					                    R.id.mapFrag)) == null)
-									 Toast.makeText(getApplicationContext(),
-						                        "Null pointer 2", Toast.LENGTH_SHORT)
-						                        .show();
-								 
-								 try
-								 {
-									 if(((SupportMapFragment) getSupportFragmentManager().findFragmentById(
-							                    R.id.mapFrag)).getMap() == null)
-											 Toast.makeText(getApplicationContext(),
-								                        "Null pointer 33", Toast.LENGTH_SHORT)
-								                        .show();
-								 }
-								 catch (Exception e) {
-									// TODO: handle exception
-								}
-									 
-							 }
-							 
-					       
-					            // check if map is created successfully or not
-					            if (googleMap == null) {
-					                Toast.makeText(getApplicationContext(),
-					                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
-					                        .show();
-					            }
-						 }
+						try
+						{
+							//docAndMaps(fragManager);
+						}
+						catch(Exception e)
+						{
+							Log.e("DocSeek",e.toString());
+						}
 					}
 
 				
@@ -242,78 +178,75 @@ public class StartingPoint extends SherlockFragmentActivity {
 		});
 
 		
+		drawerToggel = new ActionBarDrawerToggle(this, slideMenu, R.drawable.ic_launcher, R.string.open, R.string.close)
+		{
 
+			@Override
+			public void onDrawerClosed(View drawerView) {
+				super.onDrawerClosed(drawerView);
+				
+			}
+ 
+			@Override
+			public void onDrawerOpened(View drawerView) {
+				super.onDrawerOpened(drawerView);
+				
+
+			}
+
+		};
 		
 
 		slideMenu.setDrawerListener(drawerToggel);
 		
 	}
 	
-	public String[] readSubjectsFromInternet(Context context, String text) throws ClientProtocolException, IOException, URISyntaxException, JSONException
+	
+	// not required
+	public void docAndMaps(FragmentManager fragManager)
 	{
-		if(new CheckAvailabilityOfInternet().checkAvailabilityOfInternet(context))
-		{
-			DownloadData internet = new DownloadData(new URI("http://wingoku.bugs3.com/suggestions.php?suggestion="+text), context);
-			
-			String sb = internet.divideStrings();
-			
-			JSONArray array = new JSONArray(sb);
-
-			System.out.println("Data "+sb);
-			
-			String[] dataList = new String[array.length()];
-			
-			System.out.println("length is "+array.length());
-			
-			int length = array.length();
-			
-			// getting json data
-			for(int i=0;i < length; i++)
-			{
-				JSONObject temp = array.getJSONObject(i);
-				
-				dataList[i]= temp.getString("Cadre"); 
-				
-			}
-			
-			return dataList;
-		}
+		fragManager.beginTransaction().replace(R.id.placeHolderFrag, new DocDetails_and_MapFrag()).commit();
 		
-		return null;
-
+		GoogleMap googleMap = null;
+		
+		 if (googleMap == null) {
+			 
+			 if(getSupportFragmentManager().findFragmentById(R.id.mapFrag) == null)
+			 {
+				 Toast.makeText(getApplicationContext(),
+	                        "Null pointer", Toast.LENGTH_SHORT)
+	                        .show();
+				 if(((SupportMapFragment) getSupportFragmentManager().findFragmentById(
+	                    R.id.mapFrag)) == null)
+					 Toast.makeText(getApplicationContext(),
+		                        "Null pointer 2", Toast.LENGTH_SHORT)
+		                        .show();
+				 
+				 try
+				 {
+					 if(((SupportMapFragment) getSupportFragmentManager().findFragmentById(
+			                    R.id.mapFrag)).getMap() == null)
+							 Toast.makeText(getApplicationContext(),
+				                        "Null pointer 33", Toast.LENGTH_SHORT)
+				                        .show();
+				 }
+				 catch (Exception e) {
+					// TODO: handle exception
+				}
+					 
+			 }
+			 
+	   
+	 
+	            // check if map is created successfully or not
+	            if (googleMap == null) {
+	                Toast.makeText(getApplicationContext(),
+	                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
+	                        .show();
+	            }
+		 }
 	}
 	
 	
-	class BackgroundTask implements Runnable {
-		
-		String[] suggestionList;
-		
-		@Override
-		public void run() {
-			
-			try {
-				
-				suggestionList = readSubjectsFromInternet(getApplicationContext(), searchBox.getText().toString());
-				
-				System.out.println("String "+ suggestionList[0]);
-				
-			} catch (Exception e) {
-				
-				e.printStackTrace();
-			} 
-		
-				handler.post(new Runnable() {
-					@Override
-					public void run() {
-						
-						if(suggestionList != null)
-						{
-							ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_dropdown_item_1line,suggestionList);
-							searchBox.setAdapter(adapter);
-						}
-					}
-				});
-			}
-		}
 
 }

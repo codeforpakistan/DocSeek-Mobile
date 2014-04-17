@@ -29,13 +29,14 @@
             android:orientation="vertical" >
 
 
-                    <LinearLayout
+         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#E5E5E5"
             android:orientation="horizontal" 
             android:id="@+id/searchSection">
             
+       <!-- 
             <AutoCompleteTextView 
                 android:id="@+id/mSearchBox"
                 android:layout_width="match_parent"
@@ -43,6 +44,7 @@
                 android:ems="10"
                 android:hint="Search" 
                 />
+       -->
     
     
                     
@@ -50,15 +52,14 @@
 </LinearLayout>
             <!-- The navigation drawer -->
 
+			<!--  android:choiceMode="singleChoice" for keeping selected list item in pressed state -->
             <ListView
                 android:id="@+id/slideMenuList"
                 android:padding="5dp"
                 android:layout_width="240dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
-                android:choiceMode="singleChoice"
                 android:dividerHeight="7dp"
-                android:listSelector="@drawable/list_selecter"
                 android:divider = "#E5E5E5"
                 android:paddingTop="5dp" />
         </LinearLayout>

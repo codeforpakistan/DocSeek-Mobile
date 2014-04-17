@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CustomArrayAdapter extends ArrayAdapter<String>{
+public class CustomAdapter_ForSideMenu extends ArrayAdapter<String>{
 
 	public class ViewHolder{
 		
@@ -21,7 +21,7 @@ public class CustomArrayAdapter extends ArrayAdapter<String>{
 	Context context;
 	String[] data;
 	
-	public CustomArrayAdapter(Context context, int textViewResourceId,
+	public CustomAdapter_ForSideMenu(Context context, int textViewResourceId,
 			String[] objects) {
 		super(context, textViewResourceId, objects);
 	
@@ -35,14 +35,13 @@ public class CustomArrayAdapter extends ArrayAdapter<String>{
 		
 		ViewHolder viewHolder;
 		
-		// caching views
 		if(convertView == null)
 		{
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			
 			viewHolder = new ViewHolder();
 			
-			convertView = (View) inflater.inflate(R.layout.custom_list, parent, false);
+			convertView = (View) inflater.inflate(R.layout.custom_list_side_menu, parent, false);
 			viewHolder.image = (ImageView) convertView.findViewById(R.id.imageView1);
 			viewHolder.text = (TextView) convertView.findViewById(R.id.textView1);
 			
@@ -52,7 +51,6 @@ public class CustomArrayAdapter extends ArrayAdapter<String>{
 		}
 		else
 		{
-			// recycling out of scope views
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		
