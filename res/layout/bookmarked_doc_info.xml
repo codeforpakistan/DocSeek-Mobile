@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:background="@drawable/background">
+
+    <TextView
+        android:id="@+id/bookmarked_docName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:text="DocName"
+        android:textColor="#888"
+        android:textStyle="bold"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/bookmarked_HospName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bookmarked_docName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="HospName"
+        android:textColor="#888"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginBottom="10dp" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="23dp"
+        android:src="@drawable/wingoku_icon" />
+
+    <TextView
+        android:id="@+id/bookmarked_phoneNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bookmarked_HospName"
+        android:layout_marginTop="14dp"
+        android:autoLink="all"
+        android:text="Phonenum"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#888"
+        android:layout_centerHorizontal="true"
+        />
+
+    <!-- Place holder textview -->
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/imageView1"
+        android:layout_below="@+id/bookmarked_phoneNum"
+        android:layout_marginTop="30dp" />
+
+</RelativeLayout>

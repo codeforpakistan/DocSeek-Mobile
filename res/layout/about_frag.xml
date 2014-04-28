@@ -17,10 +17,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/imageView1"
+        android:textColor="#777"
         android:padding="20dp"
-        android:text="DocSeek is the Yelp of Pakistan. It aims to provide information about health facilities and doctors to the users of KPK Pakistan.
-         This is still a work in progress and more features may be added later on.
-		DocSeek is implemented on Web and Android platform." />
+        android:text="DocSeek is the 'Yelp' of Pakistan. It aims to provide information about health facilities and doctors to the users of KPK Pakistan. This is still a work in progress and more features may be added later on. DocSeek is implemented on Web and Android platform." />
 
     <TextView
         android:id="@+id/textView2"

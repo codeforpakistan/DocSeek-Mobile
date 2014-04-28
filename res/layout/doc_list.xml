@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E5E5E5"
-    android:padding="5dp" >
+    android:padding="9dp" >
 
     <ListView
         android:id="@+id/doc_listView"
@@ -13,6 +13,9 @@
         android:layout_alignParentTop="true"
         android:divider="#E5E5E5"
         android:dividerHeight="7dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:scrollbars="none"
 	 >
     </ListView>
 

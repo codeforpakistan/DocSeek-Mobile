@@ -7,24 +7,30 @@
     <!-- android:imeOptions="actionSearch" for search button in keyboard -->
     <AutoCompleteTextView
         android:id="@+id/autoCom_Frag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:ems="10" 
         android:imeOptions="actionSearch"
-        android:inputType="text">
+        android:inputType="text"
+        android:background="@drawable/background"
+        android:hint="Eg. Dentist or Eye etc."
+        android:textColor="#777"
+        >
 
         <requestFocus />
     </AutoCompleteTextView>
 
     <Button
         android:id="@+id/searchBut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="130dp"
+        android:layout_height="45dp"
         android:layout_below="@+id/autoCom_Frag"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="67dp"
+        android:background="@drawable/background"
+        android:textColor="@android:color/white"
         android:text="Search" />
 
     <ImageView

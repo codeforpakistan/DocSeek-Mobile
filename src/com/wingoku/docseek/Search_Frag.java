@@ -11,14 +11,19 @@ import org.json.JSONObject;
 
 import android.app.Service;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.widget.DrawerLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -32,7 +37,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class Search_Frag extends SherlockFragment{
+public class Search_Frag extends FragmentSuperClass{
 	
 	ArrayAdapter<String> adapter;
 	AutoCompleteTextView searchBox;
@@ -41,10 +46,16 @@ public class Search_Frag extends SherlockFragment{
 	
 	public static String selectedProfession;
 	
+	private String color = "#66CC99";
+	
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
+		visibleFragmentName("SearchFrag");
+		
+		StartingPoint.slideMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 		
 		View view = inflater.inflate(R.layout.searchbox_frag, container, false);
 		
@@ -58,18 +69,49 @@ public class Search_Frag extends SherlockFragment{
 	{
 		searchButton = (Button) view.findViewById(R.id.searchBut);
 		
+		searchButton.getBackground().setColorFilter(Color.parseColor(color), PorterDuff.Mode.DARKEN);
+		
 		searchButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
-				
+								
 				startSearch();
+			}
+		});
+		
+		searchButton.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View arg0, MotionEvent event) {
+
+				if(event.getAction() == MotionEvent.ACTION_UP)
+				{
+					color = "#66CC99";
+					
+				}
+				else
+					color = "#049372";
+				
+				new Handler().postDelayed(new Runnable() {
+							
+							@Override
+							public void run() {
+
+								searchButton.getBackground().setColorFilter(Color.parseColor(color), PorterDuff.Mode.DARKEN);
+							}
+						},70);
+				
+				return false;
 			}
 		});
 		
 		searchBox = (AutoCompleteTextView) view.findViewById(R.id.autoCom_Frag);
 		
-		searchBox.setThreshold(1); 
+		
+		searchBox.getBackground().setColorFilter(Color.parseColor("#EEEEEE"), PorterDuff.Mode.DARKEN);
+		
+		searchBox.setThreshold(1); // invoke drop down list even when 1 character is input by user
 		
 		adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.custom_autocomplete);
 		searchBox.setAdapter(adapter);
@@ -104,7 +146,7 @@ public class Search_Frag extends SherlockFragment{
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				
+								
 				completeInputOperation();
 				
 			}
@@ -156,7 +198,7 @@ public class Search_Frag extends SherlockFragment{
 							
 							if(suggestionList != null)
 							{
-								Toast.makeText(con, "Contains Data", Toast.LENGTH_SHORT).show();
+								//Toast.makeText(con, "Contains Data", Toast.LENGTH_SHORT).show();
 								
 								adapter.clear();
 								adapter.addAll(suggestionList);
@@ -234,7 +276,8 @@ public class Search_Frag extends SherlockFragment{
 		
 		getFragmentManager().beginTransaction().addToBackStack("docList").replace(getId(), new DocList()).commit();
 		
-		Toast.makeText(getActivity(), selectedProfession, Toast.LENGTH_SHORT).show();
+		//Toast.makeText(getActivity(), selectedProfession, Toast.LENGTH_SHORT).show();
 	}
+		
 	
 }

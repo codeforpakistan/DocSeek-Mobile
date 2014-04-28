@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -12,10 +13,13 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
-import android.util.Log;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -24,8 +28,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 
 
 
@@ -34,13 +38,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 public class StartingPoint extends SherlockFragmentActivity {
 
 
-	// for itboard doc seek app
 	
-	String[] names = {"Search", "About", "Developers"};
+	String[] names = {"Search", "Bookmarked Doctors", "About", "Developers"};
 	
 	ListView list;
-	DrawerLayout slideMenu;
+	static DrawerLayout slideMenu;
 	ActionBarDrawerToggle drawerToggel;
+	
 	
 	Button searchBut;
 	
@@ -49,6 +53,8 @@ public class StartingPoint extends SherlockFragmentActivity {
 	GoogleMap googleMap = null;
 	
 	Handler handler;
+	
+	FragmentManager fragManager;
 
 	
 	@Override
@@ -56,17 +62,24 @@ public class StartingPoint extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_starting_point);
 		
-		getSupportActionBar().setTitle("Doc Seek");
-		getSupportActionBar().setSubtitle("Find Your Doctor");
+		//getSupportActionBar().setSubtitle("Find Your Doctor");
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
 		
 		// for splash screen
 		getSupportActionBar().hide();
 		
-		getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5DC4EB")));
+		SpannableString spannable = new SpannableString("DocSeek");
+		spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#F0F0F0")), 0, "DocSeek".length(), 0);
+		
+		getSupportActionBar().setTitle(spannable);
+		
+		getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33b5e5"))); //#5DC4EB  // 6BB9F0
 		
 		slideMenu = (DrawerLayout) findViewById(R.id.drawer_layout);
 		
-		final FragmentManager fragManager = getSupportFragmentManager();
+		fragManager = getSupportFragmentManager();
 		FragmentTransaction fragTranscation= fragManager.beginTransaction();
 		
 		fragTranscation.replace(R.id.placeHolderFrag, new SplashScreen_Frag()).commit();
@@ -76,21 +89,29 @@ public class StartingPoint extends SherlockFragmentActivity {
 		
 		
 		if(new CheckAvailabilityOfInternet().checkAvailabilityOfInternet(this))
-		{
-			Toast.makeText(this, "Connection Successful!", Toast.LENGTH_LONG).show();
-		
+		{	
+			new Handler().postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					
+					Toast.makeText(StartingPoint.this, "Connection Successful!", Toast.LENGTH_LONG).show();
+						
+					getSupportActionBar().show();
+					
+					// enabling slideMenu opening closing 
+					slideMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+					
+					fragManager.beginTransaction().replace(R.id.placeHolderFrag, new Search_Frag()).commit();
+					
+				}
+			}, 3000);
 			
-			getSupportActionBar().show();
 			
-			// enabling slideMenu opening closing 
-			slideMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-			
-			fragManager.beginTransaction().replace(R.id.placeHolderFrag, new Search_Frag()).commit();
 		}
 		else
 		{
 			//Toast.makeText(this, "Phone is not connected to internet\nYou can't use our services", Toast.LENGTH_LONG).show();
-			
 			
 			AlertDialog.Builder adBuilder = new AlertDialog.Builder(this).setTitle("Connectivity Issue")
 					.setMessage("Internet is not available\nPlease connect to the internet and try again!")
@@ -104,7 +125,6 @@ public class StartingPoint extends SherlockFragmentActivity {
 				}
 			});
 			
-		
 			// delaying alert dialog popup for a few seconds for professional look :D
 			final AlertDialog myDialog = adBuilder.create();
 
@@ -123,7 +143,8 @@ public class StartingPoint extends SherlockFragmentActivity {
 		
 
 		
-		try {
+		try
+		{
 			Field mDragger = slideMenu.getClass().getDeclaredField(
 			        "mLeftDragger");//mRightDragger for right obviously
 			mDragger.setAccessible(true);
@@ -156,27 +177,28 @@ public class StartingPoint extends SherlockFragmentActivity {
 					fragManager.beginTransaction().replace(R.id.placeHolderFrag, new Search_Frag()).commit();
 			else
 				if(names[position].equals("Developers"))
-					fragManager.beginTransaction().addToBackStack("aboutDevs").replace(R.id.placeHolderFrag, new AboutDevelopers()).commit();
+					fragManager.beginTransaction().replace(R.id.placeHolderFrag, new AboutDevelopers()).commit();
 				else
 					if(names[position].equals("About"))
 					{
-						fragManager.beginTransaction().addToBackStack("aboutApp").replace(R.id.placeHolderFrag, new About_DocSeek_Frag()).commit();
+						FragmentTransaction fragTrans = fragManager.beginTransaction();
 						
-						try
-						{
-							//docAndMaps(fragManager);
-						}
-						catch(Exception e)
-						{
-							Log.e("DocSeek",e.toString());
-						}
+						//fragTrans.setCustomAnimations(R.anim.slide_fragment_in, R.anim.slide_fragment_out);
+						
+						fragTrans.replace(R.id.placeHolderFrag, new About_DocSeek_Frag());
+						
+						//fragTrans.addToBackStack(null);
+						
+						fragTrans.commit();
 					}
-
+					else
+						if(names[position].equals("Bookmarked Doctors"))
+							fragManager.beginTransaction().replace(R.id.placeHolderFrag, new BookmarkedDoctors()).commit();
+//					
 				
 				slideMenu.closeDrawer(Gravity.LEFT);
 			}
 		});
-
 		
 		drawerToggel = new ActionBarDrawerToggle(this, slideMenu, R.drawable.ic_launcher, R.string.open, R.string.close)
 		{
@@ -185,68 +207,53 @@ public class StartingPoint extends SherlockFragmentActivity {
 			public void onDrawerClosed(View drawerView) {
 				super.onDrawerClosed(drawerView);
 				
+				//lowerTab.setVisibility(View.VISIBLE);
 			}
  
 			@Override
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
 				
-
+				//lowerTab.setVisibility(View.GONE);
 			}
 
 		};
 		
 
 		slideMenu.setDrawerListener(drawerToggel);
-		
+				
 	}
 	
 	
-	// not required
-	public void docAndMaps(FragmentManager fragManager)
-	{
-		fragManager.beginTransaction().replace(R.id.placeHolderFrag, new DocDetails_and_MapFrag()).commit();
-		
-		GoogleMap googleMap = null;
-		
-		 if (googleMap == null) {
-			 
-			 if(getSupportFragmentManager().findFragmentById(R.id.mapFrag) == null)
-			 {
-				 Toast.makeText(getApplicationContext(),
-	                        "Null pointer", Toast.LENGTH_SHORT)
-	                        .show();
-				 if(((SupportMapFragment) getSupportFragmentManager().findFragmentById(
-	                    R.id.mapFrag)) == null)
-					 Toast.makeText(getApplicationContext(),
-		                        "Null pointer 2", Toast.LENGTH_SHORT)
-		                        .show();
-				 
-				 try
-				 {
-					 if(((SupportMapFragment) getSupportFragmentManager().findFragmentById(
-			                    R.id.mapFrag)).getMap() == null)
-							 Toast.makeText(getApplicationContext(),
-				                        "Null pointer 33", Toast.LENGTH_SHORT)
-				                        .show();
-				 }
-				 catch (Exception e) {
-					// TODO: handle exception
-				}
-					 
-			 }
-			 
-	   
-	 
-	            // check if map is created successfully or not
-	            if (googleMap == null) {
-	                Toast.makeText(getApplicationContext(),
-	                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
-	                        .show();
-	            }
-		 }
-	}
 	
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		
+		getSupportFragmentManager().popBackStack();
+	
+	}
 	
 
+		@Override
+	    public boolean onOptionsItemSelected(MenuItem item) {
+	        // Pass the event to ActionBarDrawerToggle, if it returns
+	        // true, then it has handled the app icon touch event
+			
+			 if (item.getItemId() == android.R.id.home) {
+				
+				 if(!FragmentSuperClass.name.isEmpty() && FragmentSuperClass.name.equals("SearchFrag"))
+					 if(slideMenu.isDrawerOpen(GravityCompat.START))
+					 {
+						 slideMenu.closeDrawer(GravityCompat.START); 
+					 }
+					 else
+					 	slideMenu.openDrawer(GravityCompat.START);
+				 else
+					 onBackPressed();
+			 }
+	        return super.onOptionsItemSelected(item);
+	    }
+	 
 }

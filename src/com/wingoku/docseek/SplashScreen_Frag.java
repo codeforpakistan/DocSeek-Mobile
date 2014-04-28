@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class SplashScreen_Frag extends SherlockFragment{
+public class SplashScreen_Frag extends FragmentSuperClass{
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -15,4 +15,10 @@ public class SplashScreen_Frag extends SherlockFragment{
 		// TODO Auto-generated method stub
 		return inflater.inflate(R.layout.splash_screen_frag, container, false);
 	}
+	
+	@Override
+	public void visibleFragmentName(String name) {
+		super.visibleFragmentName("SplashScreen");
+	}
+	
 }

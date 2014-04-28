@@ -13,7 +13,7 @@ public class About_DocSeek_Frag extends SherlockFragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+	
 		return inflater.inflate(R.layout.about_frag, container, false);
 	}
 }

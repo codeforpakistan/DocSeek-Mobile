@@ -37,14 +37,14 @@ public class DownloadData {
 		
 		HttpClient client = new DefaultHttpClient();
 		
-		HttpGet request = new HttpGet(); 
+		HttpGet request = new HttpGet(); // HttpGet is used to read data from internet
 		
 		request.setURI(address);
 		
 		System.out.println("address is "+ address);
 		
 		HttpResponse response = client.execute(request);
-
+		
 			
 		HttpEntity entity = response.getEntity();
 		
@@ -53,14 +53,14 @@ public class DownloadData {
 		reader = new InputStreamReader(is, "iso-8859-1");
 		
 		bufReader = new BufferedReader(reader,8);
-		
-
+	
 	}
 	
 	
 	public String divideStrings() throws IOException
 	{
-		StringBuilder sb = new StringBuilder(); // efficient & faster then String
+		StringBuilder sb = new StringBuilder(); // it is used for applying different stuff on string like concatenation. We can also concatenate using + sign but 
+		// string builder does it more efficiently and faster
 		
 		String line = ""; 
 		

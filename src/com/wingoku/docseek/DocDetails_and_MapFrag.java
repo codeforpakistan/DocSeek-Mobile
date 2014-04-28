@@ -1,61 +1,104 @@
 package com.wingoku.docseek;
 
-import android.content.Intent;
-import android.net.Uri;
+import java.io.File;
+import java.io.FileOutputStream;
+
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.method.LinkMovementMethod;
+import android.os.Environment;
+import android.support.v4.view.GravityCompat;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelSlideListener;
 
-public class DocDetails_and_MapFrag extends SherlockFragment {
+
+public class DocDetails_and_MapFrag extends SherlockFragmentActivity {
     private static final String TAG = "DemoActivity";
 
     public static final String SAVED_STATE_ACTION_BAR_HIDDEN = "saved_state_action_bar_hidden";
-    
-    Button myImage;
+
     private GoogleMap googleMap, mMap;
 
+    ListView userReviewsList;
+   
+    CheckBox bookmarkDoc;
     
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-    		Bundle savedInstanceState) {
-    	
-    	 View parentView = inflater.inflate(R.layout.map_and_doc_detail, container,false);
-    	 SlidingUpPanelLayout layout = (SlidingUpPanelLayout) parentView.findViewById(R.id.sliding_layout);
+    String docName, hospName, phoneNum;
+    
+    
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);  
+		
+    	// View parentView = inflater.inflate(R.layout.map_and_doc_detail, container,false);
+		setContentView(R.layout.map_and_doc_detail);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+		
+		SpannableString spannable = new SpannableString("DocSeek");
+		spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#F0F0F0")), 0, "DocSeek".length(), 0);
+		
+		getSupportActionBar().setTitle(spannable);
+		
+		getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33b5e5"))); //#5DC4EB  // 6BB9F0
+		
+		
+		docName = getIntent().getExtras().getString("Name");
+		hospName = getIntent().getExtras().getString("Hospital");
+		
+		TextView doctName = (TextView) findViewById(R.id.docName_detailActivity);
+		TextView HosptName = (TextView) findViewById(R.id.hospName_detailActivity);
+		
+		doctName.setText(docName);
+		HosptName.setText(hospName);
+		
+		
+		bookmarkDoc = (CheckBox) findViewById(R.id.bookmark);
+		
+		bookmarkDoc.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+				
+				// save docName, HospName & Phone number on disk
+				
+				saveBookmark();
+				
+			}
+		});
+		
+    	 SlidingUpPanelLayout layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
          layout.setShadowDrawable(getResources().getDrawable(R.drawable.above_shadow));
          layout.setAnchorPoint(0.3f);
          layout.setPanelSlideListener(new PanelSlideListener() {
              @Override
              public void onPanelSlide(View panel, float slideOffset) {
                  Log.i(TAG, "onPanelSlide, offset " + slideOffset);
-//                 if (slideOffset < 0.2) {
-//                     if (getActionBar().isShowing()) {
-//                         //getActionBar().hide();
-//                     }
-//                 } else {
-//                     if (!getActionBar().isShowing()) {
-//                         //getActionBar().show();
-//                     }
-//                 }
+
              }
 
              @Override
              public void onPanelExpanded(View panel) {
                  Log.i(TAG, "onPanelExpanded");
 
+                 
              }
 
              @Override
@@ -71,17 +114,6 @@ public class DocDetails_and_MapFrag extends SherlockFragment {
              }
          });
          
-         myImage = (Button) parentView.findViewById(R.id.button2);
-         
-         myImage.setOnClickListener(new OnClickListener() {
- 			
-     			@Override
-     			public void onClick(View arg0) {
-     				
-     				Toast.makeText(getActivity().getApplicationContext(), "ImageView touched", Toast.LENGTH_SHORT).show();
-     				
-     			}
-     		});
 
 //         TextView t = (TextView) findViewById(R.id.main);
 //         t.setOnClickListener(new OnClickListener() {
@@ -92,43 +124,97 @@ public class DocDetails_and_MapFrag extends SherlockFragment {
 //                 startActivity(i);
 //             }
 //         });
- //
-         TextView t = (TextView) parentView.findViewById(R.id.name);
+ //+
+         TextView t = (TextView) findViewById(R.id.name);
          
-//         Button f = (Button) parentView.findViewById(R.id.follow);
-//         f.setMovementMethod(LinkMovementMethod.getInstance());
-//         f.setOnClickListener(new OnClickListener() {
-//             @Override
-//             public void onClick(View v) {
-//                 Intent i = new Intent(Intent.ACTION_VIEW);
-//                 i.setData(Uri.parse("http://www.twitter.com/umanoapp"));
-//                 startActivity(i);
-//             }
-//         });
-
-
-         boolean actionBarHidden = savedInstanceState != null ?
-                 savedInstanceState.getBoolean(SAVED_STATE_ACTION_BAR_HIDDEN, false): false;
-         if (actionBarHidden) {
-             //getActionBar().hide();
-         }
-
+         setMapFrag();
          
-         try
+
+    }
+    
+    
+    private void setMapFrag()
+    {
+    	 //try
          {
         	 // dynamically creating Map Fragment. Because if we create/inflate xml fragment inside a fragment, it causes null Pointer
         	 // exception if we relaunch that xml inflated Map fragment
         	 
         	 SupportMapFragment mMapFragment = SupportMapFragment.newInstance();
-             mMap = mMapFragment.getMap();
+             googleMap = mMapFragment.getMap();
+             
+   
+
+             
+             if(mMapFragment == null)
+            	 Toast.makeText(this, "NULL mapFragment", Toast.LENGTH_SHORT).show();
         	 
 	         // filling map fragment 
-	         getFragmentManager().beginTransaction().replace(R.id.mapFragPlaceHolder, mMapFragment).commit();
+	         getSupportFragmentManager().beginTransaction().replace(R.id.mapFragPlaceHolder, new MapsFragment()).commit();
+	         
+	        
+
+		         }
+	        
+	         
+	       
          }
-         catch (Exception e) {
-			Log.e("DocSeek", e.toString());
+         //catch (Exception e)
+         {
+			//Log.e("DocSeek", e.toString());
 		}
-         return parentView;
-    }
-    
+         
+         
+        private void saveBookmark()
+     	{
+     		try
+     		{
+     		    String filePath = Environment.getExternalStorageDirectory().getPath()+"/DocSeek/Bookmarks/";
+     		    File file = new File(filePath);
+     		    if (!file.exists()) {
+     		        file.mkdirs();
+     		    }
+     		   
+     		    
+     		    if(docName.isEmpty())
+     		    {
+     		    	Toast.makeText(getApplicationContext(), "No information exists to be saved", Toast.LENGTH_SHORT).show();
+     		    	
+     		    	return;
+     		    }
+     	
+     		    String fileName =filePath.concat(docName+".txt");
+
+     		    FileOutputStream fos = new FileOutputStream(fileName, false);
+     		    
+     		    if(phoneNum == null ||phoneNum.isEmpty())
+     		    	phoneNum = "115"; // if number not avaialable, I have assigned Eidhi number for emergency calls
+     		   
+     		    String data = docName+"\n"+hospName+"\n"+phoneNum;
+     		    
+     		    fos.write(data.getBytes());
+     		    fos.close();
+     		    
+     		    
+     		    Toast.makeText(getApplicationContext(), "Bookmark Saved", Toast.LENGTH_SHORT).show();
+     		}
+     		catch(Exception e)
+     		{
+     			Log.e("DocSeek", e.toString());
+
+     		}
+     		
+     	}
+        
+        @Override
+	    public boolean onOptionsItemSelected(MenuItem item) {
+	        
+			 onBackPressed();
+			
+			return super.onOptionsItemSelected(item);
+	    }
+    	 
 }
+    
+    
+    

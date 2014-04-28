@@ -47,7 +47,7 @@ public class CustomAdapter_ForDocList extends ArrayAdapter<String>{
 			viewHolder.text = (TextView) convertView.findViewById(R.id.doc_mainText);
 			viewHolder.subText = (TextView) convertView.findViewById(R.id.doc_subText);
 			
-			viewHolder.image.setImageResource(R.drawable.ic_launcher);
+			viewHolder.image.setImageResource(R.drawable.wingoku_icon);
 			
 			convertView.setTag(viewHolder);
 		}

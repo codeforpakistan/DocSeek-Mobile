@@ -25,17 +25,20 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 	
 	public int listView_ID;
 	
-	public String docList[], hospList[];
+	public static String docList[], hospList[];
 	
 	public ListView myList;
 	
+	private boolean userReviews;
 	
-	public Parse_InsertData(Context con, int listView_ID, ListView listView)
+	public Parse_InsertData(Context con, int listView_ID, ListView listView, boolean userReviews)
 	{
 		this.context = con;
 		this.listView_ID = listView_ID;
 		
 		myList = listView;
+		
+		this.userReviews = userReviews;
 	}
 	
 
@@ -44,7 +47,10 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 		
 		try
 		{
-			readSubjectsFromInternet();
+			if(true)
+				readSubjectsFromInternet();
+			else
+				readUserReviews();
 		}
 		catch(Exception e)
 		{
@@ -72,15 +78,14 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 			
 			JSONArray array = new JSONArray(sb);
 			
+
 			System.out.println("Data "+sb);
 			
 			docList = new String[array.length()];
 			
 			hospList = new String[array.length()];
 			
-			System.out.println("length is "+array.length());
-			
-			Log.e("DocSeek", "Lenght "+array.length());
+
 			
 			int length = array.length();
 			
@@ -88,7 +93,8 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 			{
 				JSONObject temp = array.getJSONObject(i);
 				
-				docList[i]= temp.getString("FullName"); 
+				docList[i]= temp.getString("FullName"); // title is the tag in JsonFormat data which contains a value. using temp.getString("title") we get the 
+				// the value stored in title tag in jsonFormat data
 			
 				hospList[i]= temp.getString("PlaceOfCurrentPosting");
 				
@@ -105,6 +111,50 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 	
 	
 	
+	public void readUserReviews() throws ClientProtocolException, IOException, URISyntaxException, JSONException
+	{
+		Log.e("doc Seek", "Inside");
+		if(new CheckAvailabilityOfInternet().checkAvailabilityOfInternet(context))
+		{
+			//System.out.println(phpScriptAddress);
+			
+			// encoding for special characters, without encoding android HTTP won't be able to send proper data to php script
+			String encodedParams = URLEncoder.encode(Search_Frag.selectedProfession, "UTF-8");
+			
+			DownloadData internet = new DownloadData(new URI("php script"+ encodedParams), context); //"http://wingoku.bugs3.com/uetapp/getassignmentslist.php"
+			
+			String sb = internet.divideStrings();
+			
+			
+			JSONArray array = new JSONArray(sb);
+			
+			docList = new String[array.length()];
+			
+			hospList = new String[array.length()];
+			
+			
+			int length = array.length();
+			
+			for(int i=0;i < length; i++)
+			{
+				JSONObject temp = array.getJSONObject(i);
+				
+				docList[i]= temp.getString("userreviews"); // title is the tag in JsonFormat data which contains a value. using temp.getString("title") we get the 
+				// the value stored in title tag in jsonFormat data
+			
+				
+
+				Log.e("DocSeek", docList[i]);
+				
+				
+			}
+		}
+		else
+			noInternet=true;
+
+	}
+	
+	
 
 	@Override
 	protected void onPostExecute(Integer result) 
@@ -119,14 +169,17 @@ public class Parse_InsertData extends AsyncTask<Void, String, Integer>
 			CustomAdapter_ForDocList myAdapter = new CustomAdapter_ForDocList(context, listView_ID ,docList,hospList); 
 			
 			myList.setAdapter(myAdapter);
-			
-			
 		}
 		else
 		{
+			CustomAdapter_ForDocList myAdapter = new CustomAdapter_ForDocList(context, listView_ID ,new String[]{"No Data Found!"},null); 
+			
+			myList.setAdapter(myAdapter);
+			
 			Toast.makeText(context, "No Data Found!", Toast.LENGTH_LONG).show();
 			//finish();
 		}
+		
 
 	}
 	

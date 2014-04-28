@@ -14,7 +14,7 @@ public class CustomAdapter_ForSideMenu extends ArrayAdapter<String>{
 	public class ViewHolder{
 		
 		TextView text;
-		ImageView image;
+		//ImageView image;
 	}
 	
 	
@@ -42,10 +42,10 @@ public class CustomAdapter_ForSideMenu extends ArrayAdapter<String>{
 			viewHolder = new ViewHolder();
 			
 			convertView = (View) inflater.inflate(R.layout.custom_list_side_menu, parent, false);
-			viewHolder.image = (ImageView) convertView.findViewById(R.id.imageView1);
+			//viewHolder.image = (ImageView) convertView.findViewById(R.id.imageView1);
 			viewHolder.text = (TextView) convertView.findViewById(R.id.textView1);
 			
-			viewHolder.image.setImageResource(R.drawable.ic_launcher);
+			//viewHolder.image.setImageResource(R.drawable.ic_launcher);
 			
 			convertView.setTag(viewHolder);
 		}

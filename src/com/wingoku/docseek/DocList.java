@@ -10,17 +10,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class DocList extends SherlockFragment{
+public class DocList extends FragmentSuperClass{
 	
 	
 	String docList[], hospList[];
@@ -29,13 +32,18 @@ public class DocList extends SherlockFragment{
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
+		visibleFragmentName("DocListFrag");
+		
+		StartingPoint.slideMenu.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+		
+		
 		// create a layout file having a list and assign data to list by calling parse_insert data.
 		
 		View view = inflater.inflate(R.layout.doc_list, container,false);
 		
-		ListView myList = (ListView) view.findViewById(R.id.doc_listView);
+		final ListView myList = (ListView) view.findViewById(R.id.doc_listView);
 		
-		Parse_InsertData getData = new Parse_InsertData(getActivity().getApplicationContext(), R.id.doc_listView, myList);
+		Parse_InsertData getData = new Parse_InsertData(getActivity().getApplicationContext(), R.id.doc_listView, myList, false);
 		
 		getData.execute();
 		
@@ -43,12 +51,20 @@ public class DocList extends SherlockFragment{
 		myList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+			public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
 					long arg3) {
 				
-				// replace with frag that displays details about selected doctor
+		
+				Bundle bund = new Bundle();
 				
-				getFragmentManager().beginTransaction().addToBackStack("docDetail").replace(getId(), new DocDetails_and_MapFrag()).commit();
+			
+				bund.putString("Name", Parse_InsertData.docList[pos]);
+				bund.putString("Hospital", Parse_InsertData.hospList[pos]);
+				
+				Intent intent = new Intent(getActivity(), DocDetails_and_MapFrag.class);
+				intent.putExtras(bund);
+				
+				startActivity(intent);
 			}
 		});
 		
@@ -89,4 +105,7 @@ public class DocList extends SherlockFragment{
 				}
 				
 		}
+	
+
+	
 }

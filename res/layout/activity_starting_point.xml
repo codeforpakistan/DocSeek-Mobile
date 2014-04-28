@@ -21,18 +21,19 @@
             android:clickable="true" >
         </FrameLayout>
 
+        <!-- Old lLayout Background: #E5E5E5 -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="#E5E5E5"
+            android:background="#E3E3E3"
             android:orientation="vertical" >
 
 
          <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#E5E5E5"
+            android:background="#E3E3E3"
             android:orientation="horizontal" 
             android:id="@+id/searchSection">
             
@@ -53,14 +54,16 @@
             <!-- The navigation drawer -->
 
 			<!--  android:choiceMode="singleChoice" for keeping selected list item in pressed state -->
+			<!--  old listView divider color #E5E5E5 -->
             <ListView
                 android:id="@+id/slideMenuList"
-                android:padding="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:layout_width="240dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
-                android:dividerHeight="7dp"
-                android:divider = "#E5E5E5"
+                android:dividerHeight="9dp"
+                android:divider = "#E3E3E3"
                 android:paddingTop="5dp" />
         </LinearLayout>
         
