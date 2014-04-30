@@ -11,17 +11,17 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.display.DisplayManager;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-
-import com.actionbarsherlock.app.SherlockFragment;
+import android.widget.TextView;
 
 public class DocList extends FragmentSuperClass{
 	
@@ -43,7 +43,7 @@ public class DocList extends FragmentSuperClass{
 		
 		final ListView myList = (ListView) view.findViewById(R.id.doc_listView);
 		
-		Parse_InsertData getData = new Parse_InsertData(getActivity().getApplicationContext(), R.id.doc_listView, myList, false);
+		Parse_InsertData getData = new Parse_InsertData(getActivity().getApplicationContext(), R.id.doc_listView, myList, true);
 		
 		getData.execute();
 		
@@ -54,16 +54,29 @@ public class DocList extends FragmentSuperClass{
 			public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
 					long arg3) {
 				
-		
+				// replace with frag that displays details about selected doctor
+				
+				//getFragmentManager().beginTransaction().addToBackStack("docDetail").replace(getId(), new DocDetails_and_MapFrag()).commit();
+				
+				
 				Bundle bund = new Bundle();
 				
-			
-				bund.putString("Name", Parse_InsertData.docList[pos]);
-				bund.putString("Hospital", Parse_InsertData.hospList[pos]);
 				
-				Intent intent = new Intent(getActivity(), DocDetails_and_MapFrag.class);
+				bund.putString("Name",((TextView) arg1.findViewById(R.id.doc_mainText)).getText().toString());
+				bund.putString("Hospital", ((TextView) arg1.findViewById(R.id.doc_subText)).getText().toString());
+				
+				Intent intent;
+				
+				if(isScreenBig())
+				{
+					// if screen size if > 5 inches display patient review list below doc detail in doc&map frag
+					intent = new Intent(getActivity(), DocDetails_and_MapFrag.class);
+					
+				}
+				else
+					intent = new Intent(getActivity(), ViewPager_DocAndMap.class);
+				
 				intent.putExtras(bund);
-				
 				startActivity(intent);
 			}
 		});
@@ -71,6 +84,21 @@ public class DocList extends FragmentSuperClass{
 		return view;
 	}
 	
+	
+	
+	private boolean isScreenBig()
+	{
+		DisplayMetrics dm = getResources().getDisplayMetrics();
+		
+		double x = Math.pow(dm.widthPixels/dm.xdpi,2);
+	    double y = Math.pow(dm.heightPixels/dm.ydpi,2);
+	    double screenInches = Math.sqrt(x+y);
+	    
+	    if(screenInches > 5.0f)
+	    	return true;
+	    
+	    return false;
+	}
 	
 	// not required
 	public void download_DoctorsAndHospList(Context context, String text) throws ClientProtocolException, IOException, URISyntaxException, JSONException

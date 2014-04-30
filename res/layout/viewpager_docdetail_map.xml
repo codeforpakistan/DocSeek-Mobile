@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DemoActivity" >
+    tools:context=".DemoActivity"
+    android:background="#E3E3E3" >
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
         xmlns:sothree="http://schemas.android.com/apk/res-auto"
@@ -84,39 +85,6 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/docDetailView"
-
-               
-                 >
-
-                <TextView
-                    android:id="@+id/userReviews"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="12dp"
-                    android:text="Patients&apos; Reviews"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#777"
-                    android:textStyle="bold" />
-
-                <ListView
-                    android:id="@+id/patientReviewsList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/userReviews"
-                   android:paddingLeft="9dp"
-                android:paddingRight="9dp"
-                    android:dividerHeight = "7dp" 
-                                    android:clickable="true">
-                </ListView>
-            </RelativeLayout>
         </RelativeLayout>
 
         <LinearLayout

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E5E5E5"
+    android:padding="9dp"  >
+
+    <!-- 
+    <TextView
+        android:id="@+id/userReviews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="12dp"
+        android:text="Patients&apos; Reviews"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#777"
+        android:textStyle="bold" />
+        
+         -->
+
+    <ListView
+        android:id="@+id/patientReviewsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="#E5E5E5"
+        
+        android:dividerHeight="7dp"
+          android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:scrollbars="none">
+    </ListView>
+
+</RelativeLayout>

@@ -52,6 +52,9 @@
 
         <activity android:name="com.wingoku.docseek.DocDetails_and_MapFrag" >
         </activity>
+        
+        <activity android:name="com.wingoku.docseek.ViewPager_DocAndMap" >
+        </activity>
     </application>
 
 </manifest>
