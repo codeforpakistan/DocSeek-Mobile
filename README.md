@@ -12,7 +12,12 @@ DocSeek is implemented on Web & Mobile platform.
 
 * Search: For searching doctors/hospitals.
 * Users can rate & comment doctors/health facilities performance.
+* Save Doctors/Hospitals information for offline usage.
+* Message a doctor/hospital information to your friends & family.
 * Rating & commenting eligibility criteria is based on an intelligent algorithm & GPS coordinates.
+* Doctors can register to provide their information.
+* Users can register to rate, comment & view doctor's information.
+
 
 #### Web Application:
 
